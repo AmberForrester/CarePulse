@@ -34,10 +34,11 @@ export default function Home() {
 
       <Image 
         src="/assets/images/onboarding-img.png"
-        height={1000}
-        width={1000}
+        height={600}
+        width={600}
         alt="patient"
-        className="side-img max-w-[50%]"
+        className="side-img max-w-[50%] h-auto"
+        style={{ width: "auto", height: "auto" }}
         />
     </div>
   );
