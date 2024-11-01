@@ -48,6 +48,7 @@ export const createUser = async (user: CreateUserParams) => {
 export const getUser = async (userId: string) => {
   try {
     const user = await users.get(userId);
+    
     return parseStringify(user);
   } catch (error) {
     console.error("An error occurred while retrieving the user details:", error);
@@ -66,7 +67,7 @@ export const registerPatient = async ({
     if (identificationDocument) {
       const inputFile = new File(
         [identificationDocument?.get("blobFile") as Blob],
-        identificationDocument?.get("fileName") as string
+        identificationDocument?.get("fileName") as string,
       );
 
       file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile);
