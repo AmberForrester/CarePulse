@@ -5,7 +5,8 @@ import { PasskeyModal } from "@/components/PasskeyModal";
 
 
 
-const Home = ({ searchParams}: SearchParamProps) => {
+const Home = async (context: SearchParamProps) => {
+  const { searchParams } = await context;
   const isAdmin = searchParams.admin === 'true';
 
 return (

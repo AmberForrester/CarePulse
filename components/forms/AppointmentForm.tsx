@@ -8,15 +8,18 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { SelectItem } from "@/components/ui/select";
 import { Doctors } from "@/constants";
-
-
+import {
+  createAppointment,
+  updateAppointment,
+} from "@/lib/actions/appointment.actions";
 import { getAppointmentSchema } from "@/lib/validation";
 import { Appointment } from "@/types/appwrite.types";
 import "react-datepicker/dist/react-datepicker.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import { Form } from "../ui/form";
-import { createAppointment } from "@/lib/actions/appointment.actions";
+
+
 
 export const AppointmentForm = ({
   userId,
@@ -39,11 +42,9 @@ export const AppointmentForm = ({
   const form = useForm<z.infer<typeof AppointmentFormValidation>>({
     resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-      primaryPhysician: appointment ? appointment?.primaryPhysician : "",
-      schedule: appointment
-        ? new Date(appointment?.schedule!)
-        : new Date(Date.now()),
-      reason: appointment ? appointment.reason : "",
+      primaryPhysician: appointment?.primaryPhysician || "",
+      schedule: appointment?.schedule ? new Date(appointment.schedule) : new Date(),
+      reason: appointment?.reason || "",
       note: appointment?.note || "",
       cancellationReason: appointment?.cancellationReason || "",
     },
@@ -68,7 +69,7 @@ export const AppointmentForm = ({
 
     try {
       if (type === "create" && patientId) {
-        const appointmentData = {
+        const appointment = {
           userId,
           patient: patientId,
           primaryPhysician: values.primaryPhysician,
@@ -78,7 +79,7 @@ export const AppointmentForm = ({
           note: values.note,
         };
 
-        const newAppointment = await createAppointment(appointmentData);
+        const newAppointment = await createAppointment(appointment);
 
         if (newAppointment) {
           form.reset();
@@ -87,14 +88,14 @@ export const AppointmentForm = ({
           );
         }
       } else {
-        const appointmentToUpdate = {
+        const appointmentToUpdate: UpdateAppointmentParams = {
           userId,
-          appointmentId: appointment?.$id!,
+          appointmentId: appointment?.$id || "",
           appointment: {
             primaryPhysician: values.primaryPhysician,
             schedule: new Date(values.schedule),
             status: status as Status,
-            cancellationReason: values.cancellationReason,
+            cancellationReason: values.cancellationReason || "",
           },
           type,
         };
@@ -102,14 +103,17 @@ export const AppointmentForm = ({
         const updatedAppointment = await updateAppointment(appointmentToUpdate);
 
         if (updatedAppointment) {
-          setOpen && setOpen(false);
+          if (setOpen) {
+            setOpen(false);
+          }
           form.reset();
         }
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   let buttonLabel;
@@ -121,7 +125,7 @@ export const AppointmentForm = ({
       buttonLabel = "Schedule Appointment";
       break;
     default:
-      buttonLabel = "Submit Apppointment";
+      buttonLabel = "Submit Appointment";
   }
 
   return (
@@ -130,9 +134,7 @@ export const AppointmentForm = ({
         {type === "create" && (
           <section className="mb-12 space-y-4">
             <h1 className="header">New Appointment</h1>
-            <p className="text-dark-700">
-              Request a new appointment below.
-            </p>
+            <p className="text-dark-700">Request a new appointment.</p>
           </section>
         )}
 
@@ -143,7 +145,7 @@ export const AppointmentForm = ({
               control={form.control}
               name="primaryPhysician"
               label="Doctor"
-              placeholder="Select your Doctor"
+              placeholder="Select a doctor"
             >
               {Doctors.map((doctor, i) => (
                 <SelectItem key={doctor.name + i} value={doctor.name}>

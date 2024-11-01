@@ -1,13 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
-
 import { StatCard } from "@/components/StatCard";
 import { columns } from "@/components/table/columns";
 import { DataTable } from "@/components/table/DataTable";
 import { getRecentAppointmentList } from "@/lib/actions/appointment.actions";
+import { Appointment } from "@/types/appwrite.types";
+
+
 
 const AdminPage = async () => {
   const appointments = await getRecentAppointmentList();
+
+  const safeAppointments = appointments || {
+    scheduledCount: 0,
+    pendingCount: 0,
+    cancelledCount: 0,
+    documents: [] as Appointment[],
+  };
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col space-y-14">
@@ -36,25 +45,28 @@ const AdminPage = async () => {
         <section className="admin-stat">
           <StatCard
             type="appointments"
-            count={appointments.scheduledCount}
+            count={safeAppointments.scheduledCount}
             label="Scheduled appointments"
             icon={"/assets/icons/appointments.svg"}
           />
           <StatCard
             type="pending"
-            count={appointments.pendingCount}
+            count={safeAppointments.pendingCount}
             label="Pending appointments"
             icon={"/assets/icons/pending.svg"}
           />
           <StatCard
             type="cancelled"
-            count={appointments.cancelledCount}
+            count={safeAppointments.cancelledCount}
             label="Cancelled appointments"
             icon={"/assets/icons/cancelled.svg"}
           />
         </section>
 
-        <DataTable columns={columns} data={appointments.documents} />
+        <DataTable<Appointment, unknown>
+          columns={columns}
+          data={safeAppointments.documents as Appointment[]}
+        />
       </main>
     </div>
   );

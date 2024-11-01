@@ -2,8 +2,17 @@ import Image from "next/image";
 import { AppointmentForm } from "@/components/forms/AppointmentForm";
 import { getPatient } from "@/lib/actions/patient.actions";
 
-const Appointment = async ({ params: { userId } }: SearchParamProps) => {
+
+
+const Appointment = async (context: SearchParamProps) => {
+  const { params } = await context;
+  const userId = params.userId;
+  
   const patient = await getPatient(userId);
+
+  if (!patient) {
+    return <div>Patient not found</div>;
+  }
 
   return (
     <div className="flex h-screen max-h-screen">
@@ -18,12 +27,12 @@ const Appointment = async ({ params: { userId } }: SearchParamProps) => {
           />
 
           <AppointmentForm
-            patientId={patient?.$id}
+            patientId={patient.$id}
             userId={userId}
             type="create"
           />
 
-          <p className="copyright mt-10 py-12">© 2024 CarePluse</p>
+          <p className="copyright mt-10 py-12">© 2024 CarePulse</p>
         </div>
       </section>
 

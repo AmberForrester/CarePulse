@@ -7,9 +7,21 @@ import Link from 'next/link';
 
 
 
-const RequestSuccess = async ({ SearchParams, params: { userId } }: SearchParamProps) => {
-    const appointmentId = (SearchParams?.appointmentId as string) || "";
+const RequestSuccess = async (context: SearchParamProps) => {
+    const { params, searchParams } = await context;
+    const userId = params.userId;
+    const appointmentId = (searchParams?.appointmentId as string) || "";
+  
     const appointment = await getAppointment(appointmentId);
+
+    if (!appointment) {
+        return (
+          <div>
+            <p>Appointment not found.</p>
+            <Link href="/">Return to home</Link>
+          </div>
+        );
+      }
 
     const doctor = Doctors.find((doctor) => doctor.name === appointment.primaryPhysician);
 
@@ -32,6 +44,7 @@ const RequestSuccess = async ({ SearchParams, params: { userId } }: SearchParamP
                     height={300}
                     width={280}
                     alt="success"
+                    unoptimized
                 />
                 <h2 className="header mb-6 max-w-[600px] text-center">
                     Your <span className="text-green-500">appointment request</span> has been successfully submitted!
@@ -43,7 +56,7 @@ const RequestSuccess = async ({ SearchParams, params: { userId } }: SearchParamP
                 <p>Requested appointment details:</p>
                 <div className="flex items-center gap-3">
                     <Image 
-                        src={doctor?.image!}
+                        src={doctor?.image || '/assets/images/default-image.png'}
                         alt="doctor"
                         width={100}
                         height={100}
