@@ -59,7 +59,7 @@ const RenderInput = <T extends FieldValues>({ field, props }: RenderFieldProps<T
               height={24}
               width={24}
               alt={props.iconAlt || "icon"}
-              className="ml-2"
+              className="input-icon ml-2"
             />
           )}
           <FormControl>
