@@ -4,7 +4,6 @@
 
 /* ========================================== TAILWIND STYLES */
 @layer base {
-  /* Remove scrollbar */
   .remove-scrollbar::-webkit-scrollbar {
     width: 0px;
     height: 0px;

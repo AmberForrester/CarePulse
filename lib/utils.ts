@@ -5,7 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const parseStringify = <T>(value: T): T => JSON.parse(JSON.stringify(value));
+export const parseStringify = <T>(value: T | undefined): T | null => {
+  return value ? JSON.parse(JSON.stringify(value)) : null;
+};
 
 export const convertFileToUrl = (file: File) => URL.createObjectURL(file);
 

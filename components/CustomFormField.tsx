@@ -4,7 +4,6 @@ import Image from "next/image";
 import ReactDatePicker from "react-datepicker";
 import { Control, FieldValues, FieldPath, ControllerRenderProps } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
-
 import { Checkbox } from "./ui/checkbox";
 import {
   FormControl,
@@ -77,7 +76,7 @@ const RenderInput = <T extends FieldValues>({ field, props }: RenderFieldProps<T
         <FormControl>
           <Textarea
             placeholder={props.placeholder}
-            {...field}
+            {...(field as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
             className="shad-textArea"
             disabled={props.disabled}
           />
@@ -120,6 +119,7 @@ const RenderInput = <T extends FieldValues>({ field, props }: RenderFieldProps<T
             height={24}
             width={24}
             alt="calendar icon"
+            style={{ width: "auto", height: "auto" }}
             className="ml-2"
           />
           <FormControl>
@@ -128,7 +128,7 @@ const RenderInput = <T extends FieldValues>({ field, props }: RenderFieldProps<T
               selected={field.value as Date}
               onChange={(date: Date | null) => field.onChange(date)}
               timeInputLabel="Time:"
-              dateFormat={props.dateFormat ?? "MM/DD/YYYY"}
+              dateFormat={props.dateFormat ?? "MM/dd/yyyy"}
               wrapperClassName="date-picker"
             />
           </FormControl>
