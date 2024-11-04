@@ -86,7 +86,11 @@ export const PatientForm = () => {
           placeholder="(555) 444-1111"
         />
 
-        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+        <SubmitButton 
+        isLoading={isLoading}
+        >Get Started
+        </SubmitButton>
+
       </form>
     </Form>
   );
