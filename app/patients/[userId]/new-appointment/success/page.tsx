@@ -7,11 +7,11 @@ import Link from 'next/link';
 
 
 
-const RequestSuccess = async (context: SearchParamProps) => {
-    const { params, searchParams } = await context;
-    const userId = params.userId;
+const RequestSuccess = async ({
+    searchParams,
+    params: { userId },
+  }: SearchParamProps) => {
     const appointmentId = (searchParams?.appointmentId as string) || "";
-  
     const appointment = await getAppointment(appointmentId);
 
     if (!appointment) {
@@ -45,6 +45,7 @@ const RequestSuccess = async (context: SearchParamProps) => {
                     width={280}
                     alt="success"
                     unoptimized
+                    style={{ width: "auto", height: "auto" }}
                 />
                 <h2 className="header mb-6 max-w-[600px] text-center">
                     Your <span className="text-green-500">appointment request</span> has been successfully submitted!
@@ -71,6 +72,7 @@ const RequestSuccess = async (context: SearchParamProps) => {
                     height={24}
                     width={24}
                     alt="calendar"
+                    style={{ width: "auto", height: "auto" }}
                     />
                     <p>{formatDateTime(appointment.schedule).dateTime}</p>
                 </div>

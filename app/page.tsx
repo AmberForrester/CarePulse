@@ -5,9 +5,8 @@ import { PasskeyModal } from "@/components/PasskeyModal";
 
 
 
-const Home = async (context: SearchParamProps) => {
-  const { searchParams } = await context;
-  const isAdmin = searchParams.admin === 'true';
+const Home = ({ searchParams }: SearchParamProps) => {
+  const isAdmin = searchParams?.admin === "true";
 
 return (
     <div className="flex h-screen max-h-screen">
@@ -21,6 +20,7 @@ return (
             width={1000}
             alt="patient"
             className="mb-12 h-10 w-fit"
+            style={{ width: "auto", height: "auto" }}
           />
 
           <PatientForm />

@@ -4,13 +4,14 @@ import { getPatient } from "@/lib/actions/patient.actions";
 
 
 
-const Appointment = async (context: SearchParamProps) => {
-  const { params } = await context;
-  const userId = params.userId;
-  
+const Appointment = async ({ params: { userId } }: SearchParamProps) => {
+  console.log("Received userId in Appointment page:", userId);
+
   const patient = await getPatient(userId);
 
   if (!patient) {
+    console.warn("No patient found with userId:", userId);
+
     return <div>Patient not found</div>;
   }
 
@@ -24,10 +25,11 @@ const Appointment = async (context: SearchParamProps) => {
             width={1000}
             alt="logo"
             className="mb-12 h-10 w-fit"
+            style={{ width: "auto", height: "auto" }}
           />
 
           <AppointmentForm
-            patientId={patient.$id}
+            patientId={patient?.$id}
             userId={userId}
             type="create"
           />
@@ -42,6 +44,7 @@ const Appointment = async (context: SearchParamProps) => {
         width={1500}
         alt="appointment"
         className="side-img max-w-[390px] bg-bottom"
+        style={{ width: "auto", height: "auto" }}
       />
     </div>
   );

@@ -11,7 +11,7 @@ import { Appointment } from "@/types/appwrite.types";
 const AdminPage = async () => {
   const appointments = await getRecentAppointmentList();
 
-  const safeAppointments = appointments || {
+  const saveAppointments = appointments || {
     scheduledCount: 0,
     pendingCount: 0,
     cancelledCount: 0,
@@ -28,6 +28,7 @@ const AdminPage = async () => {
             width={162}
             alt="logo"
             className="h-8 w-fit"
+            style={{ width: "auto", height: "auto" }}
           />
         </Link>
 
@@ -45,19 +46,19 @@ const AdminPage = async () => {
         <section className="admin-stat">
           <StatCard
             type="appointments"
-            count={safeAppointments.scheduledCount}
+            count={saveAppointments.scheduledCount}
             label="Scheduled appointments"
             icon={"/assets/icons/appointments.svg"}
           />
           <StatCard
             type="pending"
-            count={safeAppointments.pendingCount}
+            count={saveAppointments.pendingCount}
             label="Pending appointments"
             icon={"/assets/icons/pending.svg"}
           />
           <StatCard
             type="cancelled"
-            count={safeAppointments.cancelledCount}
+            count={saveAppointments.cancelledCount}
             label="Cancelled appointments"
             icon={"/assets/icons/cancelled.svg"}
           />
@@ -65,7 +66,7 @@ const AdminPage = async () => {
 
         <DataTable<Appointment, unknown>
           columns={columns}
-          data={safeAppointments.documents as Appointment[]}
+          data={saveAppointments.documents as Appointment[]}
         />
       </main>
     </div>
