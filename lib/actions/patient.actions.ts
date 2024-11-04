@@ -103,13 +103,21 @@ export const getPatient = async (userId: string) => {
     const patients = await databases.listDocuments(
       DATABASE_ID!,
       PATIENT_COLLECTION_ID!,
+      [Query.equal("userId", [userId])],
     );
+
     console.log("Patients found with Query:", patients.documents);
 
-    return parseStringify(patients.documents[0]);
+    if (patients.documents.length > 0) {
       
-    } catch (error) {
-      console.warn("No patient found with userId:", userId, error);
+      return parseStringify(patients.documents[0]);
+    } else {
+      console.warn("No patient found with userId:", userId);
       return null;
+    }
+
+  } catch (error) {
+    console.error("An error occurred while retrieving the patient details:", error);
+    return null;
   }
 };
