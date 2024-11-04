@@ -1,6 +1,6 @@
 <a id="readme-top"></a>
 
-<h1 align="center">CarePulse | Patient Management System 	:medical_symbol:</h1> 
+<h1 align="center">CarePulse | Patient Management System :medical_symbol:</h1> 
 
 <div align="center">
 
