@@ -18,3 +18,8 @@
 <a href="">Request Feature</a>
 </p>
 </div>
+
+
+* [Appwrite](https://appwrite.io/)
+* [Shadcn/ui](https://ui.shadcn.com/)
+* [Twilio - SMS Notifications](https://www.twilio.com/)

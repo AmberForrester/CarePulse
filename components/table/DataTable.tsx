@@ -97,6 +97,7 @@ export function DataTable<TData, TValue>({
           )}
         </TableBody>
       </Table>
+      
       <div className="table-actions">
         <Button
           variant="outline"
@@ -112,6 +113,7 @@ export function DataTable<TData, TValue>({
             alt="arrow"
           />
         </Button>
+
         <Button
           variant="outline"
           size="sm"
@@ -123,7 +125,7 @@ export function DataTable<TData, TValue>({
             src="/assets/icons/arrow.svg"
             width={24}
             height={24}
-            alt="arrow "
+            alt="arrow"
             className="rotate-180"
           />
         </Button>

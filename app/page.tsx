@@ -44,6 +44,7 @@ return (
         alt="patient"
         className="side-img max-w-[50%] h-auto"
         style={{ width: "auto", height: "auto" }}
+        priority
         />
     </div>
   );

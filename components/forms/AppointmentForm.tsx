@@ -16,7 +16,6 @@ import {
 } from "@/lib/actions/appointment.actions";
 import { getAppointmentSchema } from "@/lib/validation";
 import { Appointment } from "@/types/appwrite.types";
-import "react-datepicker/dist/react-datepicker.css";
 import Image from "next/image";
 
 
@@ -42,13 +41,13 @@ export const AppointmentForm = ({
   const form = useForm<z.infer<typeof AppointmentFormValidation>>({
     resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-      primaryPhysician: appointment?.primaryPhysician || "",
-      schedule: appointment?.schedule ? new Date(appointment.schedule) : new Date(),
-      reason: appointment?.reason || "",
+      primaryPhysician: appointment ? appointment.primaryPhysician : "",
+      schedule: appointment ? new Date(appointment?.schedule) : new Date(Date.now()),
+      reason: appointment ? appointment.reason : "",
       note: appointment?.note || "",
       cancellationReason: appointment?.cancellationReason || "",
-    },
-  });
+  },
+});
 
   const onSubmit = async (
     values: z.infer<typeof AppointmentFormValidation>
@@ -65,6 +64,7 @@ export const AppointmentForm = ({
         break;
       default:
         status = "pending";
+        break;
     }
 
     try {
@@ -94,17 +94,17 @@ export const AppointmentForm = ({
           userId,
           appointmentId: appointment?.$id || "",
           appointment: {
-            primaryPhysician: values.primaryPhysician,
-            schedule: new Date(values.schedule),
+            primaryPhysician: values?.primaryPhysician,
+            schedule: new Date(values?.schedule),
             status: status as Status,
-            cancellationReason: values.cancellationReason || "",
+            cancellationReason: values?.cancellationReason || "",
           },
-          type,
+          type
         };
 
         const updatedAppointment = await updateAppointment(appointmentToUpdate);
 
-        if (updatedAppointment) {
+        if(updatedAppointment) {
           if (setOpen) {
             setOpen(false);
           }
@@ -120,6 +120,7 @@ export const AppointmentForm = ({
   };
 
   let buttonLabel;
+
   switch (type) {
     case "cancel":
       buttonLabel = "Cancel Appointment";
@@ -131,18 +132,16 @@ export const AppointmentForm = ({
       buttonLabel = "Schedule Appointment";
       break;
     default:
-      buttonLabel = "Submit Appointment";
+      break;
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-6">
-        {type === "create" && (
-          <section className="mb-12 space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
+        {type === "create" && <section className="mb-12 space-y-4">
             <h1 className="header">New Appointment</h1>
             <p className="text-dark-700">Request a new appointment.</p>
-          </section>
-        )}
+          </section>}
 
         {type !== "cancel" && (
           <>
