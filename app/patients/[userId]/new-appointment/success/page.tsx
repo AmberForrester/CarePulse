@@ -7,10 +7,7 @@ import Link from 'next/link';
 
 
 
-const RequestSuccess = async ({
-    searchParams,
-    params: { userId },
-  }: SearchParamProps) => {
+const RequestSuccess = async ({params: { userId }, searchParams }: SearchParamProps) => {
     const appointmentId = (searchParams?.appointmentId as string) || "";
     const appointment = await getAppointment(appointmentId);
 
@@ -23,7 +20,7 @@ const RequestSuccess = async ({
         );
       }
 
-    const doctor = Doctors.find((doctor) => doctor.name === appointment.primaryPhysician);
+    const doctor = Doctors.find((doc) => doc.name === appointment.primaryPhysician);
 
   return (
     <div className="flex h-screen max-h-screen px-[5%]">
@@ -38,7 +35,7 @@ const RequestSuccess = async ({
                 />
             </Link>
 
-            <section className='flex flex-col items-center'>
+            <section className="flex flex-col items-center">
                 <Image 
                     src="/assets/gifs/success.gif"
                     height={300}
@@ -54,7 +51,7 @@ const RequestSuccess = async ({
             </section>
             
             <section className="request-details">
-                <p>Requested appointment details:</p>
+                <p>Requested Appointment Details:</p>
                 <div className="flex items-center gap-3">
                     <Image 
                         src={doctor?.image || '/assets/images/default-image.png'}

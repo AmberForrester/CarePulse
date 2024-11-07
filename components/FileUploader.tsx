@@ -17,7 +17,7 @@ export const FileUploader = ({ files, onChange }: FileUploaderProps) => {
     onChange(acceptedFiles);
   }, [onChange]);
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop });
+  const { getRootProps, getInputProps } = useDropzone({onDrop});
 
   return (
     <div {...getRootProps()} className="file-upload">
@@ -41,7 +41,7 @@ export const FileUploader = ({ files, onChange }: FileUploaderProps) => {
           <div className="file-upload_label">
             <p className="text-14-regular ">
               <span className="text-green-500">Click to upload, </span>
-              or drag and drop
+              or drag and drop your files here.
             </p>
             <p className="text-12-regular">
               SVG, PNG, JPG or GIF (max. 800x400px)

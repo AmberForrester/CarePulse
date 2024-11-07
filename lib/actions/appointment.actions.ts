@@ -13,10 +13,7 @@ import { formatDateTime, parseStringify } from "../utils";
 
 
 
-//  CREATE APPOINTMENT
-export const createAppointment = async (
-  appointment: CreateAppointmentParams
-) => {
+export const createAppointment = async (appointment: CreateAppointmentParams) => {
   try {
     const newAppointment = await databases.createDocument(
       DATABASE_ID!,
@@ -27,12 +24,30 @@ export const createAppointment = async (
 
     revalidatePath("/admin");
     return parseStringify(newAppointment);
+
   } catch (error) {
     console.error("An error occurred while creating a new appointment:", error);
   }
 };
 
-//  GET RECENT APPOINTMENTS
+export const getAppointment = async (appointmentId: string) => {
+  try {
+    const appointment = await databases.getDocument(
+      DATABASE_ID!,
+      APPOINTMENT_COLLECTION_ID!,
+      appointmentId
+    );
+
+    return parseStringify(appointment);
+
+  } catch (error) {
+    console.error(
+      "An error occurred while retrieving the existing appointment:",
+      error
+    );
+  }
+};
+
 export const getRecentAppointmentList = async () => {
   try {
     const appointments = await databases.listDocuments(
@@ -47,23 +62,17 @@ export const getRecentAppointmentList = async () => {
       cancelledCount: 0,
     };
 
-    const counts = (appointments.documents as Appointment[]).reduce(
-      (acc, appointment) => {
-        switch (appointment.status) {
-          case "scheduled":
-            acc.scheduledCount++;
-            break;
-          case "pending":
-            acc.pendingCount++;
-            break;
-          case "cancelled":
-            acc.cancelledCount++;
-            break;
+    const counts = (appointments.documents as Appointment[]).reduce((acc, appointment) => {
+        if (appointment.status === "scheduled") {
+          acc.scheduledCount += 1;
+        } else if (appointment.status === "pending") {
+          acc.pendingCount += 1;
+        } else if (appointment.status === "cancelled") {
+          acc.cancelledCount += 1;
         }
+
         return acc;
-      },
-      initialCounts
-    );
+      }, initialCounts);
 
     const data = {
       totalCount: appointments.total,
@@ -80,7 +89,7 @@ export const getRecentAppointmentList = async () => {
   }
 };
 
-//  SEND SMS NOTIFICATION
+
 export const sendSMSNotification = async (userId: string, content: string) => {
   try {
     // https://appwrite.io/docs/references/1.5.x/server-nodejs/messaging#createSms
@@ -96,7 +105,7 @@ export const sendSMSNotification = async (userId: string, content: string) => {
   }
 };
 
-//  UPDATE APPOINTMENT
+
 export const updateAppointment = async ({
   appointmentId,
   userId,
@@ -119,25 +128,10 @@ export const updateAppointment = async ({
 
     revalidatePath("/admin");
     return parseStringify(updatedAppointment);
+
   } catch (error) {
     console.error("An error occurred while scheduling an appointment:", error);
   }
 };
 
-// GET APPOINTMENT
-export const getAppointment = async (appointmentId: string) => {
-  try {
-    const appointment = await databases.getDocument(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
-      appointmentId
-    );
 
-    return parseStringify(appointment);
-  } catch (error) {
-    console.error(
-      "An error occurred while retrieving the existing patient:",
-      error
-    );
-  }
-};

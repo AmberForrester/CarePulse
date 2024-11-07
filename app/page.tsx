@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { PatientForm } from "@/components/forms/PatientForm";
+import PatientForm from "@/components/forms/PatientForm";
 import { PasskeyModal } from "@/components/PasskeyModal";
 
 
@@ -21,6 +21,7 @@ return (
             alt="patient"
             className="mb-12 h-10 w-fit"
             style={{ width: "auto", height: "auto" }}
+            priority
           />
 
           <PatientForm />

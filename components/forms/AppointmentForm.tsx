@@ -1,11 +1,13 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import SubmitButton from "../SubmitButton";
+import { Form } from "../ui/form";
+import CustomFormField, { FormFieldType } from "../CustomFormField";
+import { useRouter } from "next/navigation";
+import { Dispatch, SetStateAction, useState } from "react";
 import { SelectItem } from "@/components/ui/select";
 import { Doctors } from "@/constants";
 import {
@@ -15,9 +17,7 @@ import {
 import { getAppointmentSchema } from "@/lib/validation";
 import { Appointment } from "@/types/appwrite.types";
 import "react-datepicker/dist/react-datepicker.css";
-import CustomFormField, { FormFieldType } from "../CustomFormField";
-import SubmitButton from "../SubmitButton";
-import { Form } from "../ui/form";
+import Image from "next/image";
 
 
 
@@ -68,25 +68,27 @@ export const AppointmentForm = ({
     }
 
     try {
-      if (type === "create" && patientId) {
-        const appointment = {
+      if(type === "create" && patientId) {
+
+        const appointmentData = {
           userId,
           patient: patientId,
           primaryPhysician: values.primaryPhysician,
           schedule: new Date(values.schedule),
           reason: values.reason!,
-          status: status as Status,
           note: values.note,
-        };
+          status: status as Status,
+        }
 
-        const newAppointment = await createAppointment(appointment);
+        const appointment = await createAppointment(appointmentData);
 
-        if (newAppointment) {
+        if (appointment) {
           form.reset();
           router.push(
-            `/patients/${userId}/new-appointment/success?appointmentId=${newAppointment.$id}`
+            `/patients/${userId}/new-appointment/success?appointmentId=${appointment.$id}`
           );
         }
+
       } else {
         const appointmentToUpdate: UpdateAppointmentParams = {
           userId,
@@ -111,6 +113,7 @@ export const AppointmentForm = ({
       }
     } catch (error) {
       console.log(error);
+
     } finally {
       setIsLoading(false);
     }
@@ -120,6 +123,9 @@ export const AppointmentForm = ({
   switch (type) {
     case "cancel":
       buttonLabel = "Cancel Appointment";
+      break;
+    case "create":
+      buttonLabel = "Create Appointment";
       break;
     case "schedule":
       buttonLabel = "Schedule Appointment";
@@ -145,7 +151,7 @@ export const AppointmentForm = ({
               control={form.control}
               name="primaryPhysician"
               label="Doctor"
-              placeholder="Select a doctor"
+              placeholder="Choose a Physician"
             >
               {Doctors.map((doctor, i) => (
                 <SelectItem key={doctor.name + i} value={doctor.name}>
@@ -154,7 +160,7 @@ export const AppointmentForm = ({
                       src={doctor.image}
                       width={32}
                       height={32}
-                      alt="doctor"
+                      alt={doctor.name}
                       className="rounded-full border border-dark-500"
                     />
                     <p>{doctor.name}</p>
@@ -170,17 +176,18 @@ export const AppointmentForm = ({
               label="Expected appointment date"
               showTimeSelect
               dateFormat="MM/dd/yyyy  -  h:mm aa"
+              minTime={new Date(new Date().setHours(9, 0, 0))}
+              maxTime={new Date(new Date().setHours(17, 0, 0))}
+              timeIntervals={30}
             />
 
-            <div
-              className={`flex flex-col gap-6  ${type === "create" && "xl:flex-row"}`}
-            >
+            <div className="flex flex-col gap-6 xl:flex-row">
               <CustomFormField
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
                 name="reason"
-                label="Appointment reason"
-                placeholder="Annual monthly check-up"
+                label="Reason for Appointment"
+                placeholder="Annual check-up"
                 disabled={type === "schedule"}
               />
 
@@ -188,8 +195,8 @@ export const AppointmentForm = ({
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
                 name="note"
-                label="Comments/notes"
-                placeholder="Prefer afternoon appointments, if possible"
+                label="Comments/Notes"
+                placeholder="Prefer afternoon appointments, if possible please."
                 disabled={type === "schedule"}
               />
             </div>
@@ -201,17 +208,14 @@ export const AppointmentForm = ({
             fieldType={FormFieldType.TEXTAREA}
             control={form.control}
             name="cancellationReason"
-            label="Reason for cancellation"
-            placeholder="Urgent meeting came up"
+            label="Reason for Cancellation"
+            placeholder="Sorry, an urgent meeting came up."
           />
         )}
 
-        <SubmitButton
-          isLoading={isLoading}
-          className={`${type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}
-        >
-          {buttonLabel}
-        </SubmitButton>
+        <SubmitButton isLoading={isLoading} className={`${type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}
+        > {buttonLabel}</SubmitButton>
+        
       </form>
     </Form>
   );

@@ -1,20 +1,20 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Form } from "@/components/ui/form";
 import { createUser } from "@/lib/actions/patient.actions";
 import { UserFormValidation } from "@/lib/validation";
-import "react-phone-number-input/style.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 
 
 
-export const PatientForm = () => {
+const PatientForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,22 +27,17 @@ export const PatientForm = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
-    console.log("Form Submitted with values:", values);
+  async function onSubmit({ name, email, phone }: z.infer<typeof UserFormValidation>) {
+    // console.log("Form Submitted with values:", values);
     setIsLoading(true);
 
     try {
-      const user = {
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-      };
+      const userData = { name, email, phone };
 
-      const newUser = await createUser(user);
+      const user = await createUser(userData);
 
-      if (newUser) {
-        router.push(`/patients/${newUser.$id}/register`);
-      }
+      if(user) router.push(`/patients/${user.$id}/register`)
+
     } catch (error) {
       console.log(error);
     }
@@ -62,7 +57,7 @@ export const PatientForm = () => {
           fieldType={FormFieldType.INPUT}
           control={form.control}
           name="name"
-          label="Full name"
+          label="Full Name"
           placeholder="John Doe"
           iconSrc="/assets/icons/user.svg"
           iconAlt="user"
@@ -86,12 +81,11 @@ export const PatientForm = () => {
           placeholder="(555) 444-1111"
         />
 
-        <SubmitButton 
-        isLoading={isLoading}
-        >Get Started
-        </SubmitButton>
-
+        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
+        
       </form>
     </Form>
   );
 };
+
+export default PatientForm;
