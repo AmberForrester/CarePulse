@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Form } from "@/components/ui/form";
@@ -12,8 +11,8 @@ import { UserFormValidation } from "@/lib/validation";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 
-
-
+ 
+ 
 const PatientForm = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -26,28 +25,28 @@ const PatientForm = () => {
       phone: "",
     },
   });
-
- const onSubmit = async (values: z.infer<typeof UserFormValidation>) => {
+ 
+  async function onSubmit({ name, email, phone }: z.infer<typeof UserFormValidation>) {
     setIsLoading(true);
 
     try {
-      const user = { 
-      name: values.name,
-      email:values.email,
-      phone: values.phone
-    };
+      const userData = { name, email, phone };
 
-      const newUser = await createUser(user);
+      const user = await createUser(userData);
 
-      if (newUser) {
-        router.push(`/patients/${newUser.$id}/register`);
+      console.log("User data:", user);
+
+      if(user && user.$id) {
+        router.push(`/patients/${user.$id}/register`);
+      } else {
+        console.log("User creation failed or user object does not have an $id.");
       }
-
     } catch (error) {
-      console.log(error);
+      console.error("Error in form submission:", error);
+      
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (

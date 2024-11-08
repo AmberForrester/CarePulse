@@ -8,12 +8,6 @@ import { getPatient } from "@/lib/actions/patient.actions";
 const Appointment = async ({ params: { userId } }: SearchParamProps) => {
   const patient = await getPatient(userId);
 
-  if (!patient) {
-    console.warn("No patient found with userId: userId");
-
-    return <div>Patient not found</div>;
-  }
-
   return (
     <div className="flex h-screen max-h-screen">
       <section className="remove-scrollbar container my-auto">
@@ -30,9 +24,9 @@ const Appointment = async ({ params: { userId } }: SearchParamProps) => {
           </Link>
           
           <AppointmentForm
-            type="create"
+            patientId={patient?.$id}
             userId={userId}
-            patientId={patient.$id}
+            type="create"
           />
 
           <p className="copyright mt-10 py-12">© 2024 CarePulse</p>
