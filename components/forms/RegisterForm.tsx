@@ -336,7 +336,7 @@ const RegisterForm = ({ user }: { user: User }) => {
             fieldType={FormFieldType.SKELETON}
             control={form.control}
             name="identificationDocument"
-            label="Scanned Copy of Identification Document"
+            label="Upload Identification Document"
             renderSkeleton={(field) => (
                 <FormControl>
                     <FileUploader
