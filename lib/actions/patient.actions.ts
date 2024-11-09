@@ -15,13 +15,13 @@ export const createUser = async (user: CreateUserParams) => {
       user.phone,
       undefined,
       user.name
-    )
-    // console.log("New User Created:", newUser);
+    );
+    console.log("New User Created:", newUser);
 
     return parseStringify(newUser);
 
   } catch (error: unknown) {
-    // console.error("Error during user creation:", error);
+    console.error("Error during user creation:", error);
 
     if (
       typeof error === "object" && 
@@ -29,12 +29,12 @@ export const createUser = async (user: CreateUserParams) => {
       "code" in error && 
       (error as { code: number }).code === 409
     ) {
-      const existingUser = await users.list([
+      const documents = await users.list([
         Query.equal("email", [user.email]),
       ]);
-      // console.log("User already exists:", existingUser.users[0]);
+      console.log("User already exists:", documents.users[0]);
 
-      return existingUser.users[0];
+      return documents?.users[0];
     }
   }
 };

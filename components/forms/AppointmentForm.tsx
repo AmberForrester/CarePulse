@@ -19,8 +19,6 @@ import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
 import { Form } from "../ui/form";
 
-
-
 export const AppointmentForm = ({
   userId,
   patientId,
@@ -29,7 +27,7 @@ export const AppointmentForm = ({
   setOpen,
 }: {
   userId: string;
-  patientId: string | undefined;
+  patientId: string;
   type: "create" | "schedule" | "cancel";
   appointment?: Appointment;
   setOpen?: Dispatch<SetStateAction<boolean>>;
@@ -42,20 +40,17 @@ export const AppointmentForm = ({
   const form = useForm<z.infer<typeof AppointmentFormValidation>>({
     resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-      primaryPhysician: appointment ? appointment?.primaryPhysician : "",
-      schedule: appointment
-        ? new Date(appointment?.schedule)
-        : new Date(Date.now()),
-      reason: appointment ? appointment.reason : "",
+      primaryPhysician: appointment?.primaryPhysician || "",
+      schedule: appointment?.schedule ? new Date(appointment.schedule) : new Date(),
+      reason: appointment?.reason || "",
       note: appointment?.note || "",
       cancellationReason: appointment?.cancellationReason || "",
     },
-});
+  });
 
   const onSubmit = async (
     values: z.infer<typeof AppointmentFormValidation>
   ) => {
-    console.log("onSubmit called with values:", values);
     setIsLoading(true);
 
     let status;
@@ -71,23 +66,18 @@ export const AppointmentForm = ({
     }
 
     try {
-      console.log("Type:", type, "Patient ID:", patientId);
-
-      if(type === "create" && patientId) {
-
+      if (type === "create" && patientId) {
         const appointment = {
           userId,
           patient: patientId,
           primaryPhysician: values.primaryPhysician,
           schedule: new Date(values.schedule),
           reason: values.reason!,
-          note: values.note,
           status: status as Status,
-        }
+          note: values.note,
+        };
 
-        console.log("Creating new appointment:", appointment);
         const newAppointment = await createAppointment(appointment);
-        console.log("New appointment response:", newAppointment); 
 
         if (newAppointment) {
           form.reset();
@@ -96,37 +86,35 @@ export const AppointmentForm = ({
           );
         }
       } else {
-        const appointmentToUpdate = {
+        const appointmentToUpdate: UpdateAppointmentParams = {
           userId,
           appointmentId: appointment?.$id || "",
           appointment: {
-            primaryPhysician: values?.primaryPhysician,
-            schedule: new Date(values?.schedule),
+            primaryPhysician: values.primaryPhysician,
+            schedule: new Date(values.schedule),
             status: status as Status,
-            cancellationReason: values?.cancellationReason || "",
+            cancellationReason: values.cancellationReason || "",
           },
           type,
         };
 
         const updatedAppointment = await updateAppointment(appointmentToUpdate);
 
-        if(updatedAppointment) {
+        if (updatedAppointment) {
           if (setOpen) {
             setOpen(false);
           }
           form.reset();
-          }
         }
-      } catch (error) {
+      }
+    } catch (error) {
       console.log(error);
-
     } finally {
       setIsLoading(false);
     }
   };
 
   let buttonLabel;
-
   switch (type) {
     case "cancel":
       buttonLabel = "Cancel Appointment";
@@ -140,7 +128,7 @@ export const AppointmentForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-6">
         {type === "create" && (
           <section className="mb-12 space-y-4">
             <h1 className="header">New Appointment</h1>
@@ -164,7 +152,7 @@ export const AppointmentForm = ({
                       src={doctor.image}
                       width={32}
                       height={32}
-                      alt={doctor.name}
+                      alt="doctor"
                       className="rounded-full border border-dark-500"
                     />
                     <p>{doctor.name}</p>
@@ -180,12 +168,15 @@ export const AppointmentForm = ({
               label="Expected appointment date"
               showTimeSelect
               dateFormat="MM/dd/yyyy  -  h:mm aa"
+              minDate={new Date()}
               minTime={new Date(new Date().setHours(9, 0, 0))}
               maxTime={new Date(new Date().setHours(17, 0, 0))}
               timeIntervals={30}
             />
 
-            <div className="flex flex-col gap-6 xl:flex-row">
+            <div
+              className={`flex flex-col gap-6  ${type === "create" && "xl:flex-row"}`}
+            >
               <CustomFormField
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
@@ -217,9 +208,12 @@ export const AppointmentForm = ({
           />
         )}
 
-        <SubmitButton isLoading={isLoading} className={`${type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}
-        > {buttonLabel}</SubmitButton>
-        
+        <SubmitButton
+          isLoading={isLoading}
+          className={`${type === "cancel" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}
+        >
+          {buttonLabel}
+        </SubmitButton>
       </form>
     </Form>
   );

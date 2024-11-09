@@ -24,7 +24,7 @@ const Appointment = async ({ params: { userId } }: SearchParamProps) => {
           </Link>
           
           <AppointmentForm
-            patientId={patient?.$id}
+            patientId={patient ? patient.$id : ""}
             userId={userId}
             type="create"
           />

@@ -36,7 +36,7 @@ const PatientForm = () => {
 
       console.log("User data:", user);
 
-      if(user && user.$id) {
+      if(user) {
         router.push(`/patients/${user.$id}/register`);
       } else {
         console.log("User creation failed or user object does not have an $id.");

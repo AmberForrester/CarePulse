@@ -41,6 +41,7 @@ interface CustomProps<T extends FieldValues> {
   disabled?: boolean;
   dateFormat?: string;
   showTimeSelect?: boolean;
+  minDate?: Date;
   minTime?: Date;
   maxTime?: Date;
   timeIntervals?: number;
@@ -130,8 +131,8 @@ const RenderField = <T extends FieldValues>({ field, props }: RenderFieldProps<T
             height={24}
             width={24}
             alt="calendar icon"
-            style={{ width: "auto", height: "auto" }}
             className="ml-2"
+            style={{ width: "auto", height: "auto" }}
           />
           <FormControl>
             <ReactDatePicker
@@ -140,6 +141,7 @@ const RenderField = <T extends FieldValues>({ field, props }: RenderFieldProps<T
               onChange={(date: Date | null) => field.onChange(date)}
               timeInputLabel="Time:"
               dateFormat={props.dateFormat ?? "MM/dd/yyyy"}
+              minDate={props.minDate}
               minTime={props.minTime}
               maxTime={props.maxTime}
               timeIntervals={props.timeIntervals}
