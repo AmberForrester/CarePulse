@@ -16,7 +16,7 @@ export const createUser = async (user: CreateUserParams) => {
       undefined,
       user.name
     );
-    console.log("New User Created:", newUser);
+    // console.log("New User Created:", newUser);
 
     return parseStringify(newUser);
 
@@ -29,10 +29,8 @@ export const createUser = async (user: CreateUserParams) => {
       "code" in error && 
       (error as { code: number }).code === 409
     ) {
-      const documents = await users.list([
-        Query.equal("email", [user.email]),
-      ]);
-      console.log("User already exists:", documents.users[0]);
+      const documents = await users.list([Query.equal("email", [user.email])]);
+      // console.log("User already exists:", documents.users[0]);
 
       return documents?.users[0];
     }
@@ -52,13 +50,20 @@ export const getUser = async (userId: string) => {
 
 export const getPatient = async (userId: string) => {
   try {
-    // console.log("Fetching patient with userId:", userId);
+  // console.log("Fetching patient with userId:", userId);
+
     const patients = await databases.listDocuments(
       DATABASE_ID!,
       PATIENT_COLLECTION_ID!,
-      [Query.equal('userId', userId)]
+      [Query.equal('userId', [userId])]
+
     );
-    // console.log("Appwrite response:", patients);
+    // console.log("Patients response after query:", patients);
+
+    // console.log("Database ID:", DATABASE_ID);
+    // console.log("Patient Collection ID:", PATIENT_COLLECTION_ID);
+
+    // console.log("Patients response:", patients);
 
     return parseStringify(patients.documents[0]);
 

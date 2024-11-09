@@ -27,7 +27,7 @@ export const AppointmentForm = ({
   setOpen,
 }: {
   userId: string;
-  patientId: string;
+  patientId: string | undefined;
   type: "create" | "schedule" | "cancel";
   appointment?: Appointment;
   setOpen?: Dispatch<SetStateAction<boolean>>;
@@ -48,9 +48,9 @@ export const AppointmentForm = ({
     },
   });
 
-  const onSubmit = async (
-    values: z.infer<typeof AppointmentFormValidation>
-  ) => {
+  async function onSubmit(values: z.infer<typeof AppointmentFormValidation>) {
+    // console.log("Form is being submitted");
+    
     setIsLoading(true);
 
     let status;
@@ -63,11 +63,16 @@ export const AppointmentForm = ({
         break;
       default:
         status = "pending";
+        break;
     }
+
+    // console.log('BEFORE THE TRY', type, patientId)
 
     try {
       if (type === "create" && patientId) {
-        const appointment = {
+      // console.log('IM HERE')
+
+        const appointmentData = {
           userId,
           patient: patientId,
           primaryPhysician: values.primaryPhysician,
@@ -75,15 +80,15 @@ export const AppointmentForm = ({
           reason: values.reason!,
           status: status as Status,
           note: values.note,
-        };
+        }
 
-        const newAppointment = await createAppointment(appointment);
+        const appointment = await createAppointment(appointmentData);
 
-        if (newAppointment) {
+        // console.log(appointment)
+
+        if (appointment) {
           form.reset();
-          router.push(
-            `/patients/${userId}/new-appointment/success?appointmentId=${newAppointment.$id}`
-          );
+          router.push(`/patients/${userId}/new-appointment/success?appointmentId=${appointment.$id}`)
         }
       } else {
         const appointmentToUpdate: UpdateAppointmentParams = {
@@ -109,21 +114,26 @@ export const AppointmentForm = ({
       }
     } catch (error) {
       console.log(error);
+
     } finally {
       setIsLoading(false);
     }
   };
 
   let buttonLabel;
+
   switch (type) {
     case "cancel":
       buttonLabel = "Cancel Appointment";
       break;
+    case "create":
+      buttonLabel = "Create Appointment";
+      break;
     case "schedule":
       buttonLabel = "Schedule Appointment";
-      break;
+      break;  
     default:
-      buttonLabel = "Submit Appointment";
+      break;
   }
 
   return (

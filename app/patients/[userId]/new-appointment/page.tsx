@@ -7,6 +7,7 @@ import { getPatient } from "@/lib/actions/patient.actions";
 
 const Appointment = async ({ params: { userId } }: SearchParamProps) => {
   const patient = await getPatient(userId);
+  // console.log("Fetched patient:", patient);
 
   return (
     <div className="flex h-screen max-h-screen">
@@ -23,12 +24,12 @@ const Appointment = async ({ params: { userId } }: SearchParamProps) => {
             />
           </Link>
           
-          <AppointmentForm
-            patientId={patient ? patient.$id : ""}
-            userId={userId}
-            type="create"
-          />
-
+            <AppointmentForm
+              patientId={patient?.$id}
+              userId={userId}
+              type="create"
+            />
+          
           <p className="copyright mt-10 py-12">© 2024 CarePulse</p>
         </div>
       </section>

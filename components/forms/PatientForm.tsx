@@ -10,6 +10,7 @@ import { createUser } from "@/lib/actions/patient.actions";
 import { UserFormValidation } from "@/lib/validation";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
+import "react-phone-number-input/style.css";
 
  
  
@@ -34,7 +35,7 @@ const PatientForm = () => {
 
       const user = await createUser(userData);
 
-      console.log("User data:", user);
+      // console.log("User data:", user);
 
       if(user) {
         router.push(`/patients/${user.$id}/register`);

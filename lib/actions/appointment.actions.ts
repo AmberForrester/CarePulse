@@ -12,9 +12,7 @@ import {
 import { formatDateTime, parseStringify } from "../utils";
 
 
-export const createAppointment = async (
-  appointment: CreateAppointmentParams
-) => {
+export const createAppointment = async (appointment: CreateAppointmentParams) => {
   try {
     const newAppointment = await databases.createDocument(
       DATABASE_ID!,
