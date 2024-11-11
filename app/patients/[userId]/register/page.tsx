@@ -3,16 +3,19 @@ import { redirect } from "next/navigation";
 import RegisterForm from "@/components/forms/RegisterForm";
 import { getPatient, getUser } from "@/lib/actions/patient.actions";
 
-
-
 const Register = async ({ params: { userId } }: SearchParamProps) => {
   const user = await getUser(userId);
+    console.log("User data:", user);
+
   const patient = await getPatient(userId);
+  console.log("Patient data:", patient);
+
+  if (patient) {
+    redirect(`/patients/${userId}/new-appointment`);
+    return null;
+  }
 
   if (patient) redirect(`/patients/${userId}/new-appointment`);
-  
-
-  
 
   return (
     <div className="flex h-screen max-h-screen">
@@ -25,9 +28,7 @@ const Register = async ({ params: { userId } }: SearchParamProps) => {
             alt="carepulse"
             className="mb-12 h-10 w-fit"
           />
-
-          <RegisterForm user={user!} />
-
+          {user ? <RegisterForm user={user} /> : <p>Loading user data...</p>} 
           <p className="copyright py-12">© 2024 CarePulse</p>
         </div>
       </section>

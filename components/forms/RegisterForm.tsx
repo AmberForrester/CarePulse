@@ -161,7 +161,7 @@ const RegisterForm = ({ user }: { user: User }) => {
                 <FormControl>
                   <RadioGroup
                     className="flex h-11 gap-6 xl:justify-between"
-                    value={typeof field.value === 'string' ? field.value : GenderOptions[0]}
+                    value={typeof field.value === "string" ? field.value : GenderOptions[0]}
                     onValueChange={(value) => field.onChange(value)}>
                     {GenderOptions.map((option, i) => (
                       <div key={option + i} className="radio-group">

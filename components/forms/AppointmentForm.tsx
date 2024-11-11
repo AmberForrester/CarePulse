@@ -66,11 +66,11 @@ export const AppointmentForm = ({
         break;
     }
 
-    // console.log('BEFORE THE TRY', type, patientId)
+    // console.log("BEFORE THE TRY", type, patientId)
 
     try {
       if (type === "create" && patientId) {
-      // console.log('IM HERE')
+      // console.log("IM HERE")
 
         const appointmentData = {
           userId,

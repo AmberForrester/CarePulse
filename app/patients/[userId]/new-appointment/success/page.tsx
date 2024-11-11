@@ -1,9 +1,9 @@
-import { Button } from '@/components/ui/button';
-import { Doctors } from '@/constants';
-import { getAppointment } from '@/lib/actions/appointment.actions';
-import { formatDateTime } from '@/lib/utils';
-import Image from 'next/image';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { Doctors } from "@/constants";
+import { getAppointment } from "@/lib/actions/appointment.actions";
+import { formatDateTime } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
 
 
 
@@ -54,7 +54,7 @@ const RequestSuccess = async ({params: { userId }, searchParams }: SearchParamPr
                 <p>Requested Appointment Details:</p>
                 <div className="flex items-center gap-3">
                     <Image 
-                        src={doctor?.image || '/assets/images/default-image.png'}
+                        src={doctor?.image || "/assets/images/default-image.png"}
                         alt="doctor"
                         width={100}
                         height={100}

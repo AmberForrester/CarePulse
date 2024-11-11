@@ -1,27 +1,24 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { ID, Query } from "node-appwrite";
 import { Appointment } from "@/types/appwrite.types";
-import {
-  APPOINTMENT_COLLECTION_ID,
-  DATABASE_ID,
-  databases,
-  messaging,
-} from "../appwrite.config";
+import { appwriteConfig } from "../appwrite/config";
+import { createAdminClient } from "../appwrite";
 import { formatDateTime, parseStringify } from "../utils";
 
 
 export const createAppointment = async (appointment: CreateAppointmentParams) => {
+  const { databases } = await createAdminClient();
+
   try {
     const newAppointment = await databases.createDocument(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
+      appwriteConfig.databaseId,
+      appwriteConfig.appointmentCollectionId,
       ID.unique(),
       appointment
     );
 
-    revalidatePath("/admin");
+    await fetch("/api/revalidateAdmin", { method: "POST" });
     return parseStringify(newAppointment);
   } catch (error) {
     console.error("An error occurred while creating a new appointment:", error);
@@ -30,10 +27,12 @@ export const createAppointment = async (appointment: CreateAppointmentParams) =>
 
 
 export const getRecentAppointmentList = async () => {
+  const { databases } = await createAdminClient();
+
   try {
     const appointments = await databases.listDocuments(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
+      appwriteConfig.databaseId,
+      appwriteConfig.appointmentCollectionId,
       [Query.orderDesc("$createdAt")]
     );
 
@@ -67,7 +66,6 @@ export const getRecentAppointmentList = async () => {
       documents: appointments.documents,
     };
 
-    revalidatePath('/admin');
     return parseStringify(data);
   } catch (error) {
     console.error(
@@ -79,6 +77,8 @@ export const getRecentAppointmentList = async () => {
 
 
 export const sendSMSNotification = async (userId: string, content: string) => {
+  const { messaging } = await createAdminClient();
+
   try {
     const message = await messaging.createSms(
       ID.unique(),
@@ -99,10 +99,12 @@ export const updateAppointment = async ({
   appointment,
   type,
 }: UpdateAppointmentParams) => {
+  const { databases } = await createAdminClient();
+
   try {
     const updatedAppointment = await databases.updateDocument(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
+      appwriteConfig.databaseId,
+      appwriteConfig.appointmentCollectionId,
       appointmentId,
       appointment
     );
@@ -112,7 +114,7 @@ export const updateAppointment = async ({
     const smsMessage = `Greetings from CarePulse. ${type === "schedule" ? `Your appointment is confirmed for ${formatDateTime(appointment.schedule!).dateTime} with Dr. ${appointment.primaryPhysician}` : `We regret to inform that your appointment for ${formatDateTime(appointment.schedule!).dateTime} is cancelled. Reason:  ${appointment.cancellationReason}`}.`;
     await sendSMSNotification(userId, smsMessage);
 
-    revalidatePath("/admin");
+    await fetch("/api/revalidateAdmin", { method: "POST" });
     return parseStringify(updatedAppointment);
   } catch (error) {
     console.error("An error occurred while scheduling an appointment:", error);
@@ -120,14 +122,15 @@ export const updateAppointment = async ({
 };
 
 export const getAppointment = async (appointmentId: string) => {
+  const { databases } = await createAdminClient();
+
   try {
     const appointment = await databases.getDocument(
-      DATABASE_ID!,
-      APPOINTMENT_COLLECTION_ID!,
+      appwriteConfig.databaseId,
+      appwriteConfig.appointmentCollectionId,
       appointmentId
     );
 
-    revalidatePath('/admin');
     return parseStringify(appointment);
   } catch (error) {
     console.error(
